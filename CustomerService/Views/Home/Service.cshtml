@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "Service";
+}
+<header>
+    <link href="~/Content/chatroom.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/chatwindow-sever.js"></script>
+</header>
+<body>
+    <div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">此專案為測試專案，用來研究聊天室的製作。</p>
+        <p>前端參考資源:<a>https://bootsnipp.com/snippets/y8e4W</a> by pablocorezzola</p>
+        <h2>@ViewBag.Message</h2>
+        <div class="btn btn-warning" onclick="location.href='@Url.Action("login","Home", new { id = 10})'">登入管理員</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <ul class="list-group" id="list-group"></ul>
+            </div>
+            <div class="col-sm-8 col-md-8 col-lg-8 frame">
+                <ul id="chatwindow"></ul>
+                <div>
+                    <div class="msj-rta macro">
+                        <div class="text text-r" style="background:whitesmoke !important">
+                            <input class="mytext" id="mytext" placeholder="Type a message" />
+                        </div>
+                    </div>
+                    <!--傳送按鈕-->
+                    <div style="padding:20px;">
+                        <button type="button" id="send" class="btn btn-warning" onclick="SendMessage(document.getElementById('mytext').value)">傳送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
