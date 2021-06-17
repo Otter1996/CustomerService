@@ -39,4 +39,104 @@
         </div>
     </div>
 </body>
+<script>
+    //取得某用戶的對話紀錄
+    var RefreshUreadToRead = "@Url.Action("UnreadToRead","Home")";
+    var RefreshUnreadMessage = "@Url.Action("ShowConversation", "Home")";
+    var UserId = "";
+    function readUnreadMessage(username) {
+        UserId = username; //儲存點選的用戶名稱給btn用
+        document.getElementById('chatwindow').innerHTML = "";
+        $.ajax({
+            type: "POST", //傳送方式
+            url: RefreshUnreadMessage, //傳送目的地
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ 'alreadyread': username}),
+            success: function (data) {
+                list = JSON.parse(data);//這個很重要!
+                list.forEach(function (value, index, array) {
+                    if (array[index].RequestId == username && array[index].ResponseId == "管理員") {
+                        insertChat("me", array[index].Context);
+                    } else if (array[index].RequestId == "管理員" && array[index].ResponseId == username) {
+                        insertChat("you", array[index].Context);
+                    }
+                })
+                $('#' + username + ' span').html('0');
+                ChangeUnReadToRead(username,"管理員");
+            },
+            error: function (xhr) {
+                console.log("Oops");
+            }
+        })
+    }
+
+    function ChangeUnReadToRead(RequestId,ResponseId)
+    {
+        $.ajax({
+            type: "POST", //傳送方式
+            url: RefreshUreadToRead, //傳送目的地
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ 'Who': RequestId, 'ToWho': ResponseId }),
+            error: function (xhr) {
+                console.log("Oops");
+            }
+        })
+    }
+</script>
+<script>
+     ///送出訊息
+    var SendMessageUrl = "@Url.Action("SendMessage","Home")"
+    function postmessagetocontroller(message) {
+        $(document).ready(function () {
+            $.ajax({
+                url: SendMessageUrl,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ 'Message': message, 'ResponseId': UserId }),
+                error: function (xhr) {
+                    console.log("hey!有些東西出錯了，沒有收到controller來的訊息");
+                },
+                success: function (response) {
+                    let boolean = JSON.parse(response)
+                    if (!response) {
+                        alert('請先登入使用者再使用聊天功能');
+                    }
+                }
+            });
+        });
+    }
+</script>
+<script>
+    //更新未讀清單，每5秒request一次
+    var connectcontroller = "@Url.Action("ReadMessage", "Home")";
+    var list = "";
+    setInterval(
+        function () {
+            $.ajax({
+                type: "POST",
+                url: connectcontroller,
+                success: function (result) {
+                    list = JSON.parse(result);//這個很重要!
+                    list.forEach(function (value, index, array) {
+                        if (document.getElementById(array[index].name)) {
+                            $('#' + array[index].name + ' span').html(array[index].count);
+                        }
+                        else if (array[index].name != "管理員") {
+                            
+                            $('#list-group').append(
+                                '<li class="list-group-item d-flex justify-content-between align-items-center btn" id="' + array[index].name + '"onclick="readUnreadMessage(\'' + array[index].name + '\')">'
+                                + array[index].name +
+                                '<span class="badge badge-primary badge-pill">' + array[index].count + '</span></li>')
+                        }
+                    })
+                },
+                error: function (xhr) {
+                    console.log("hey!有些東西出錯了，沒有收到controller來的訊息");
+                },
+            });
+        }, 5000);
+</script>
 
