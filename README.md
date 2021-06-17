@@ -1,0 +1,6 @@
+# CustomerService(多對一客服系統)
+本次練習是為了熟練ajax與後端的api的串接。此專案裡利用了大量的ajax與後端構通，像是:
+1. Client端之使用者發送訊息給Server端
+2. Client端每5秒發送訊息向Server詢問是否有未讀訊息
+3. Client端之客服發送訊息給Server端
+4. Client端之客服每5秒發送訊息向Server詢問是否有使用者的未讀訊息
